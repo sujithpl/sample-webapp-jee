@@ -2,7 +2,6 @@ package com.sujithpaul.jeepetsupplystore.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Inject;
 
@@ -18,17 +17,19 @@ import com.sujithpaul.jeepetsupplystore.repository.OrderRepository;
 public class OrderService {
 	@Inject
 	private OrderRepository orderRepository;
-	
+
 	@Inject
 	private InventoryAPIClient client;
-	
-	private AtomicLong orderNumber = new AtomicLong(1000L);
 
-	public Order getOrder(long orderNumber){
-		OrderEntity orderEntity = orderRepository.findOrder(orderNumber);
-		return convertToOrder(orderEntity);
+	public Order getOrder(long orderNumber) {
+		try {
+			OrderEntity orderEntity = orderRepository.findOrder(orderNumber);
+			return convertToOrder(orderEntity);
+		} catch (Exception e) {
+			throw e;
+		}
 	}
-	
+
 	public Order saveOrder(OrderInput orderInput) {
 		OrderEntity orderEntity = convertToOrderEntity(orderInput);
 		orderRepository.saveOrder(orderEntity);
@@ -37,7 +38,6 @@ public class OrderService {
 
 	private OrderEntity convertToOrderEntity(OrderInput orderInput) {
 		OrderEntity orderEntity = new OrderEntity();
-		orderEntity.setOrderNumber(orderNumber.incrementAndGet());
 		orderEntity.setCustomerId(orderInput.getCustomerId());
 		List<Item> orderItems = new ArrayList<Item>();
 		for (ItemInput item : orderInput.getItems()) {
@@ -61,10 +61,10 @@ public class OrderService {
 		order.setTotal(computeTotal(order.getItems()));
 		return order;
 	}
-	
-	private double computeTotal(List<Item> items){
+
+	private double computeTotal(List<Item> items) {
 		double total = 0.0;
-		for(Item item: items){
+		for (Item item : items) {
 			total += item.getQuantity() * item.getPrice();
 		}
 		return total;

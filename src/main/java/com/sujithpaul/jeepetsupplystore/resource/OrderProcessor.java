@@ -9,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.sujithpaul.jeepetsupplystore.model.Order;
 import com.sujithpaul.jeepetsupplystore.model.OrderInput;
@@ -23,8 +24,13 @@ public class OrderProcessor {
 	@GET
 	@Path("{orderNumber}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Order getOrder(@PathParam("orderNumber") long orderNumber) {
-		return orderService.getOrder(orderNumber);
+	public Response getOrder(@PathParam("orderNumber") long orderNumber) {
+		try {
+			Order order = orderService.getOrder(orderNumber);
+			return Response.ok(order).build();
+		} catch (Exception e) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
 	@POST

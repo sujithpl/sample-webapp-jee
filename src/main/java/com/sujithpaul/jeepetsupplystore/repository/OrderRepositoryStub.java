@@ -3,9 +3,12 @@ package com.sujithpaul.jeepetsupplystore.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Alternative;
+
 import com.sujithpaul.jeepetsupplystore.model.Item;
 import com.sujithpaul.jeepetsupplystore.model.OrderEntity;
 
+@Alternative
 public class OrderRepositoryStub implements OrderRepository {
 
 	private List<OrderEntity> orderList = new ArrayList<OrderEntity>();
